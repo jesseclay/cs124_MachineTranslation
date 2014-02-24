@@ -14,7 +14,7 @@ Francia - France
 Es - It is
 la - the
 cara - face
-y- and 
+y - and 
 la - the
 voz - voice
 de - of
@@ -24,7 +24,7 @@ para - for
 la - the
 cita - date
 de - of
-las- the
+las - the
 europeas - European
 que - that 
 dice - say
