@@ -51,9 +51,9 @@ class MachineTranslation:
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
 			adjNounSwapped = self.adjNounSwap(directTranslation)
-			possessives = self.possessive(adjNounSwapped)
-			nounSwapped = self.nounSwap(possessives)
-			self.translation.append(nounSwapped)
+			nounSwapped = self.nounSwap(adjNounSwapped)
+			possessives = self.possessive(nounSwapped)
+			self.translation.append(possessives)
 
 	def questionSwap(self, sentence):
 		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
@@ -116,11 +116,8 @@ class MachineTranslation:
 
 		firstWord = pos[0]
 		secondWord = pos[1]
-		print sentence
-		print pos
 		for i, word in enumerate(pos[2:]):
 			if firstWord[1] in ['NN', 'NNS'] and secondWord[0]=='of' and word[1] in ['NN', 'NNS']:
-				print 'here'
 				temp = tokens[i]
 				tokens[i] = tokens[i+2]
 				tokens[i+2] = temp
