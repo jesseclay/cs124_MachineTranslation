@@ -10,7 +10,8 @@ class MachineTranslation:
 	NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
 	VERB = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
 	NUMBER_PAT = "\d+"
-
+	OPEN_QUESTION_MARK = '\xc2\xbf'
+	
 	def __init__(self):
 		cess_sents = cess.tagged_sents()
 		self.bi_tag = bt(cess_sents)
@@ -31,7 +32,10 @@ class MachineTranslation:
 		for sentence in self.sentences:
 
 			sentenceTranslation = []
-			negationSwapped = self.negationSwap(sentence)
+			questionSwapped = sentence
+			if sentence.startswith(self.OPEN_QUESTION_MARK):
+				questionSwapped = self.questionSwap(sentence)
+			negationSwapped = self.negationSwap(questionSwapped)
 			tokens = nltk.word_tokenize(negationSwapped)
 			for token in tokens:
 				token = token.decode('utf-8')
@@ -45,19 +49,12 @@ class MachineTranslation:
 			adjNounSwapped = self.adjNounSwap(directTranslation)
 			self.translation.append(adjNounSwapped)
 
-	def adjNounSwap(self, sentence):
-		tokens = nltk.word_tokenize(sentence)
-		pos = nltk.pos_tag(tokens)
-
-		firstWord = pos[0]
-		for i, word in enumerate(pos[1:]):
-			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
-				temp = tokens[i]
-				tokens[i] = tokens[i+1]
-				tokens[i+1] = temp
-			firstWord = word
-
-		return " ".join(map(str, tokens))
+	def questionSwap(self, sentence):
+		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
+		#tokens = nltk.word_tokenize(sentence)
+		#pos = self.bi_tag.tag(tokens)
+		#return " ".join(map(str, tokens))
+		return sentence
 
 	def negationSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
@@ -77,6 +74,20 @@ class MachineTranslation:
 				if word[1] is not None and (word[1].startswith('vs') or word[1].startswith('vm')):
 					tokens[i] = tokens[i+1]
 					tokens[i+1] = "does not"
+			firstWord = word
+
+		return " ".join(map(str, tokens))
+
+	def adjNounSwap(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = nltk.pos_tag(tokens)
+
+		firstWord = pos[0]
+		for i, word in enumerate(pos[1:]):
+			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
+				temp = tokens[i]
+				tokens[i] = tokens[i+1]
+				tokens[i+1] = temp
 			firstWord = word
 
 		return " ".join(map(str, tokens))
