@@ -7,7 +7,6 @@ from nltk import UnigramTagger as ut
 from nltk.model import NgramModel
 from nltk.probability import LidstoneProbDist
 from nltk import FreqDist
-from pattern.en import conjugate
 from nltk.corpus import wordnet
 
 class MachineTranslation:
@@ -207,7 +206,7 @@ class MachineTranslation:
 
 	def pluralADJ(self, token):
 		translation = self.dictionary[token]
-		pos = self.bi_tag.tag(nltk.word_tokenize(token))
+		pos = self.uni_tag.tag(nltk.word_tokenize(token))
 		if pos[0][1] is not None and pos[0][1].startswith('a') and 'p' in pos[0][1]:
 			if translation.endswith('s'):
 				if wordnet.synsets(translation[:-1]):
