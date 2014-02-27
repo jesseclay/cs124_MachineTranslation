@@ -3,30 +3,42 @@
 import collections, nltk, re
 from nltk.corpus import cess_esp as cess
 from nltk.corpus import brown
-from nltk import UnigramTagger as bt
+from nltk import UnigramTagger as ut
 from nltk.model import NgramModel
 from nltk.probability import LidstoneProbDist
 from nltk import FreqDist
+from pattern.en import conjugate
 from nltk.corpus import wordnet
 
 class MachineTranslation:
 	PUNCTUATION = [',', '.', '(', ')', '?']
-	ADJECTIVE = ['JJ', 'JJR', 'JJS']
-	NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
-	VERB = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+	ENG_ADJECTIVE = ['JJ', 'JJR', 'JJS']
+	ENG_NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
+	ENG_VERB = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+
+	ESP_ADJECTIVE = ['a', 'q', 'o', '0', 'c', 's', 'f', 'p', 'n']
+	ESP_NOUN = ['n']
+	ESP_VERB = ['vm', 'vs']
+	ESP_VERB_PAST = ['vmii', 'vmis', 'vsii', 'vsis']
+
 	NUMBER_PAT = "\d+"
 	OPEN_QUESTION_MARK = '\xc2\xbf'
 	
 	def __init__(self):
 		cess_sents = cess.tagged_sents()
-		self.bi_tag = bt(cess_sents)
+		self.uni_tag = ut(cess_sents)
 
 		self.translation = []
 		self.dictionary = collections.defaultdict(lambda: 0)
 		dictionaryFile = open("Dictionary.txt", 'r')
-		# for translation in dictionaryFile:
-		# 	spanish, english = translation.split(" - ")
-		# 	self.dictionary[spanish.decode('utf-8')] = english.rstrip('\n')
+		for translation in dictionaryFile:
+			spanish, english = translation.split(" - ")
+			spanish = spanish.decode('utf-8')
+			self.dictionary[spanish] = collections.defaultdict(lambda: [])
+			english = english.rstrip(';\n').split('; ')
+			for pos in english:
+				pos = pos.split(': ')
+				self.dictionary[spanish][pos[0]] = pos[1].split(', ')
 
 		self.sentences = []
 		sentencesFile = open("DevSet.txt", 'r')
@@ -42,12 +54,25 @@ class MachineTranslation:
 				questionSwapped = self.questionSwap(sentence)
 			negationSwapped = self.negationSwap(questionSwapped)
 			tokens = nltk.word_tokenize(negationSwapped)
-			for token in tokens:
-				token = token.decode('utf-8')
-				if token in self.PUNCTUATION or re.search(self.NUMBER_PAT, token):
-					wordTranslation = token
+
+			pos = self.uni_tag.tag(tokens)
+			for word in pos:
+				candidate = word[0].decode('utf-8')
+				if candidate in self.PUNCTUATION or re.search(self.NUMBER_PAT, candidate):
+					wordTranslation = candidate
+				elif (word[1] and any(word[1].startswith(adj) for adj in self.ESP_ADJECTIVE) and 
+					'adjective' in self.dictionary[candidate]):
+					wordTranslation = self.dictionary[candidate]['adjective'][0]
+				elif (word[1] and any(word[1].startswith(noun) for noun in self.ESP_NOUN) and
+					'noun' in self.dictionary[candidate]):
+					wordTranslation = self.dictionary[candidate]['noun'][0]
+				elif (word[1] and any(word[1].startswith(verb) for verb in self.ESP_VERB) and
+					'verb' in self.dictionary[candidate]):
+					wordTranslation = self.dictionary[candidate]['verb'][0]
+					if any(word[1].startswith(vp) for vp in self.ESP_VERB_PAST):
+						wordTranslation += 'ed'
 				else:
-					wordTranslation = self.pluralADJ(token)
+					wordTranslation = self.pluralADJ(self.dictionary[candidate]['default'][0])
 				sentenceTranslation.append(wordTranslation)
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
@@ -63,16 +88,18 @@ class MachineTranslation:
 				removeExtraSpace = removeExtraSpace[:-2] + "."
 			self.translation.append(removeExtraSpace)
 
+	# if question is a yes or no question, swap the order of first two words
 	def questionSwap(self, sentence):
 		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
 		#tokens = nltk.word_tokenize(sentence)
-		#pos = self.bi_tag.tag(tokens)
+		#pos = self.uni_tag.tag(tokens)
 		#return " ".join(map(str, tokens))
 		return sentence
 
+	# reverse the order of negation words and their objects
 	def negationSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
-		pos = self.bi_tag.tag(tokens)
+		pos = self.uni_tag.tag(tokens)
 
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
@@ -93,6 +120,7 @@ class MachineTranslation:
 
 		return " ".join(map(str, tokens))
 
+	# switch position of possessive words to use apostrophe notation
 	def possessive(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
@@ -102,7 +130,7 @@ class MachineTranslation:
 		firstWord = pos[0]
 		secondWord = pos[1]
 		for i, word in enumerate(pos[2:]):
-			if firstWord[1] in self.NOUN and secondWord[0]=='of' and word[1] in ['NNP', 'NNPS']:
+			if firstWord[1] in self.ENG_NOUN and secondWord[0]=='of' and word[1] in ['NNP', 'NNPS']:
 				temp = tokens[i]
 				tokens[i] = tokens[i+2] + "'s"
 				tokens[i+2] = temp
@@ -116,6 +144,7 @@ class MachineTranslation:
 
 		return " ".join(map(str, tokens))
 
+	# fixes the "number of telephone" to "telephone number" example
 	def nounSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
@@ -146,13 +175,14 @@ class MachineTranslation:
 			print "a judge "+word+" Miami"
 		 	print model.prob(word, ["a judge "+word+" Miami"])
 
+	# reverses order of adjacent adjectives and nouns
 	def adjNounSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
 
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
-			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
+			if firstWord[1] in self.ENG_NOUN and word[1] in self.ENG_ADJECTIVE:
 				temp = tokens[i]
 				tokens[i] = tokens[i+1]
 				tokens[i+1] = temp
@@ -166,11 +196,11 @@ class MachineTranslation:
 
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
-			if firstWord[1] not in self.NOUN and firstWord[1] not in ['TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.VERB:
+			if firstWord[1] not in self.ENG_NOUN and firstWord[1] not in ['TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.ENG_VERB:
 				tokens[i+1] = "they " + tokens[i+1]
 			firstWord = word
 
-		if pos[0][1] in self.VERB:
+		if pos[0][1] in self.ENG_VERB:
 			tokens[0] = "They " + tokens[0]
 
 		return " ".join(map(str, tokens))
