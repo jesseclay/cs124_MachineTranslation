@@ -7,12 +7,14 @@ from nltk import BigramTagger as bt
 from nltk.model import NgramModel
 from nltk.probability import LidstoneProbDist
 from nltk import FreqDist
+from pattern.en import conjugate
 
 class MachineTranslation:
 	PUNCTUATION = [',', '.', '(', ')', '?']
 	ADJECTIVE = ['JJ', 'JJR', 'JJS']
 	NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
 	VERB = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+	VERB_PAST = ['VBD', 'VBN']
 	NUMBER_PAT = "\d+"
 	OPEN_QUESTION_MARK = '\xc2\xbf'
 	
@@ -41,12 +43,18 @@ class MachineTranslation:
 				questionSwapped = self.questionSwap(sentence)
 			negationSwapped = self.negationSwap(questionSwapped)
 			tokens = nltk.word_tokenize(negationSwapped)
-			for token in tokens:
-				token = token.decode('utf-8')
-				if token in self.PUNCTUATION or re.search(self.NUMBER_PAT, token):
-					wordTranslation = token
+
+			pos = self.bi_tag.tag(tokens)
+			print pos
+			for word in pos:
+				candidate = word[0].decode('utf-8')
+				if candidate in self.PUNCTUATION or re.search(self.NUMBER_PAT, candidate):
+					wordTranslation = candidate
+				elif word[1] in self.VERB_PAST:
+					print 'PAST VERB!!'
+					wordTranslation = self.dictionary[candidate] + 'ed'
 				else:
-					wordTranslation = self.dictionary[token]
+					wordTranslation = self.dictionary[candidate]
 				sentenceTranslation.append(wordTranslation)
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
@@ -55,6 +63,7 @@ class MachineTranslation:
 			possessives = self.possessive(nounSwapped)
 			self.translation.append(possessives)
 
+	# if question is a yes or no question, swap the order of first two words
 	def questionSwap(self, sentence):
 		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
 		#tokens = nltk.word_tokenize(sentence)
@@ -62,6 +71,7 @@ class MachineTranslation:
 		#return " ".join(map(str, tokens))
 		return sentence
 
+	# reverse the order of negation words and their objects
 	def negationSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = self.bi_tag.tag(tokens)
@@ -85,6 +95,7 @@ class MachineTranslation:
 
 		return " ".join(map(str, tokens))
 
+	# switch position of possessive words to use apostrophe notation
 	def possessive(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
@@ -108,6 +119,7 @@ class MachineTranslation:
 
 		return " ".join(map(str, tokens))
 
+	# fixes the "number of telephone" to "telephone number" example
 	def nounSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
@@ -138,6 +150,7 @@ class MachineTranslation:
 			print "a judge "+word+" Miami"
 		 	print model.prob(word, ["a judge "+word+" Miami"])
 
+	# reverses order of adjacent adjectives and nouns
 	def adjNounSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
