@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 
 import collections, nltk
 
@@ -9,7 +10,7 @@ class MachineTranslation:
 		dictionaryFile = open("Dictionary.txt", 'r')
 		for translation in dictionaryFile:
 			spanish, english = translation.split(" - ")
-			self.dictionary[spanish] = english.rstrip('\n')
+			self.dictionary[spanish.decode('utf-8')] = english.rstrip('\n')
 
 		self.sentences = []
 		sentencesFile = open("DevSet.txt", 'r')
@@ -18,15 +19,14 @@ class MachineTranslation:
 
 	def translate(self):
 		for sentence in self.sentences:
-
 			sentenceTranslation = []
 			tokens = nltk.word_tokenize(sentence)
 			for token in tokens:
+				token = token.decode('utf-8')
 				wordTranslation = self.dictionary[token]
 				sentenceTranslation.append(wordTranslation)
+			print sentenceTranslation
 			self.translation.append(" ".join(map(str, sentenceTranslation)))
-
 
 MT = MachineTranslation()
 MT.translate()
-
