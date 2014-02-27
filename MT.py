@@ -1,16 +1,17 @@
 # -*- coding: UTF-8 -*-
 
-import collections, nltk
+import collections, nltk, re
 from nltk.corpus import cess_esp as cess
 from nltk import BigramTagger as bt
 
 class MachineTranslation:
+	PUNCTUATION = [',', '.', '(', ')', '?']
+	ADJECTIVE = ['JJ', 'JJR', 'JJS']
+	NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
+	VERB = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+	NUMBER_PAT = "\d+"
 
 	def __init__(self):
-		self.adjective = ['JJ', 'JJR', 'JJS']
-		self.noun = ['NN', 'NNS', 'NNP', 'NNPS']
-		self.verb = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
-
 		cess_sents = cess.tagged_sents()
 		self.bi_tag = bt(cess_sents)
 
@@ -34,7 +35,10 @@ class MachineTranslation:
 			tokens = nltk.word_tokenize(negationSwapped)
 			for token in tokens:
 				token = token.decode('utf-8')
-				wordTranslation = self.dictionary[token]
+				if token in self.PUNCTUATION or re.search(self.NUMBER_PAT, token):
+					wordTranslation = token
+				else:
+					wordTranslation = self.dictionary[token]
 				sentenceTranslation.append(wordTranslation)
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
@@ -47,7 +51,7 @@ class MachineTranslation:
 
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
-			if firstWord[1] in self.noun and word[1] in self.adjective:
+			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
 				temp = tokens[i]
 				tokens[i] = tokens[i+1]
 				tokens[i+1] = temp
@@ -79,4 +83,5 @@ class MachineTranslation:
 
 MT = MachineTranslation()
 MT.translate()
-print MT.translation
+for i, translation in enumerate(MT.translation):
+	print '{0}) {1}'.format(i + 1, translation)
