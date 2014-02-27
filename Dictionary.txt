@@ -1,167 +1,121 @@
-Los - the
-cambios - changes
-regulatorios - regulatory
-castigan - punish
-a - to
-Acciona - Acciona
-que - who
-pierde - lost
-millones - millon
-Es - It is
-la - the
-cara - face
-y - and 
-la - the
-voz - voice
-de - of
-los - the
-socialistas - socialists
-para - for
-la - the
-cita - date
-de - of
-las - the
-europeas - European
-que - that 
-dice - say
-marcarán - they scored
-el - the
-inicio - initiation
-del - of
-cambio - change
-político - political
-en - in
-España - Spain
-Marruecos - Morocco
-no - no
-aceptó - accepted
-la - the
-ayuda - help
-española - spanish
-para - for
-el - the
-rescate - rescue
-de - of
-cuerpos - bodies
-El - the
-Foro - form
-Económico - economic
-Mundial - global
-presenta - present
-los - the
-grandes - large
-avances - developments
-a - to
-que - that
-tendrán - will have
-un - a
-papel - role
-decisivo - decisive
-en - in
-el - the
-cambio - change
-del - of the
-mundo - world 
-moderno - modern
-Intentaron - they tried to
-reanimar - revive
-a - to
-los - the
-dos - two
-más - more
-graves - serious
-pero - but
-no - not
-fue - was
-posible - possible
-En - in
-su - its
-declaración - statement
-ante - before
-el - the
-juez - judge
-los - the
-verificadores - checkers
-también - also
-han - have
-precisado - specified
-que - that
-cobran - charge
-euros - euros
-por - per
-día - day
-de - of
-trabajo - work
-Somos - we are
-profesionales - professionals
-con - with 
-experiencia - experience
-y - and
-creemos - we think
-que - that
-tenemos - we have
-una - a
-auténtica - authentic
-oportunidad - opportunity
-para - for
-la - the
-paz - peace
-Cuál - what
-es - is
-su - your
-número - number
-de - of
-teléfono - telephone
-Un - a
-juez - judge
-de - from
-Miami - Miami
-estudia - is studying
-si - if
-el - the 
+Los - article: the; pronoun: them;
+cambios - noun: changes;
+regulatorios - adjective: regulatory;
+castigan - verb: punish;
+a - preposition: to;
+Acciona - ProperNoun: Acciona;
+que - adjective: what; pronoun: what, that; conjunction: that, than;
+pierde - verb: lost;
+millones - noun: millon;
+Es - phrase: this is, you are;
+la - article: the; pronoun: her, it, you;
+cara - noun: face;
+y - conjunction: and;
+la - article: the; pronoun: her, it, you;
+voz - noun: voice;
+de - preposition: of;
+socialistas - noun: socialists;
+para - prepostion: for;
+cita - noun: appointment, date, engagment, quote, quotation, citation, meeting, rendezvous, tryst, extract;
+Los - article: the; pronoun: them;
+europeas - adjective: European;
+dice - verb: say;
+marcarán - verb: they scored;
+el - article: the;
+inicio - noun: initiation;
+del - preposition: of;
+cambio - noun: change;
+político - adjective: political; noun: politician;
+en - preposition: in, on, at, to, into, for, by, about;
+España - ProperNoun: Spain;
+Marruecos - ProperNoun: Morocco;
+no - particle: not, no, nay;
+aceptó - verb: accepted;
+ayuda - noun: help, aid, assistance, charity;
+española - adjective: Spanish; noun: Spanish, Spaniard;
+rescate - noun: rescue, deliverance, ransom, recovery, retrieval
+cuerpos - noun: bodies;
+Foro Económico Mundial- ProperNoun: World Economic Form
+presenta - verb: present;
+grandes - adjective: large;
+avances - noun: developments;
+conjunction: that, than;
+tendrán - verb: will have;
+un - article: a, an; adjective: one;
+papel - noun: role, part, document;
+decisivo - adjective: decisive, vital overriding; noun: momentousness;
+cambio - noun: change;
+del - preposition: of;
+mundo - noun: world;
+moderno - adjective: modern; noun: modern;
+Intentaron - verb: they tried to;
+reanimar - verb: revive;
+dos - noun: two;
+más - adjective: more, most, plus, another; adverb: more, most, other, else, furthermore; noun: more, plus; suffix: most;
+graves - verb: serious;
+pero - conjunctuon: but; noun: but;
+fue - verb: was;
+posible - adjective: possible;
+su - pronoun: your, its, his, their, her, his; adjective: his;
+declaración - noun: statement;
+ante - prepostion: before; noun: suede;
+juez - noun: judge;
+verificadores - noun: checkers;
+también - adverb: also, too, as well;
+han - verb: have;
+precisado - verb: specified;
+cobran - verb: charge;
+euros - noun: euros;
+por - preposition: per;
+día - noun: day;
+del - preposition: of;
+trabajo - noun: work;
+Somos - verb: we are;
+profesionales - adjective: professionals, noun: professionals;
+con - preposition: with;
+experiencia - noun: experience;
+creemos - verb: we think;
+tenemos - verb: we have;
+una - article: a, an; adjective: one;
+auténtica - adjective: authentic;
+oportunidad - noun: opportunity;
+paz - noun: peace;
+Cuál - interjection: what;
+número - noun: number;
+teléfono - noun: telephone;
+juez - noun: judge;
+Miami - ProperNoun: Miami;
+estudia - verb: is studying;
+si - conjunction: if;
 público - public
-tiene - has
-derecho - the right
-a - to
-ver - view
-el - the
-pene - penis
-de - of
-Bieber - Bieber
-Nadal - Nadal
-vuelve - returns
-a - to
-su - his
-sitio - room
-no - not
-me - me
-gusta - like
-ni - or
-parece - seems
-provocador - provocative
-las - the
-españolas - spanish
-saben - know
-administrar - manage
-el - the
-Estado - state
-Gobierno - government
-tiene - you have
-que - that
-mostrarle - show
-a - to
-Reding - Reding
-aseguran - ensure
-su - its
-malestar - discomfort
-profesiones - professions
-un - a
-trabajo - work
-para - for
-la - the
-próxima - next
-década - decade
-semana - week
-fantástica - great
-de - of
-Ibra - Ibra
+tiene - verb: has;
+derecho - adjective: right; adverb: right; noun: right;
+ver - verb: view;
+pene - noun: penis;
+Bieber - ProperNoun: Bieber;
+Nadal - ProperNoun: Nadal;
+vuelve - verb: returns;
+sitio - noun: room, site, place, location, locale.
+me - pronoun: me, myself;
+gusta - verb: like;
+ni - conjunction: or, nor, neither; adverb: neither;
+parece - verb: seems;
+provocador - adjective: provocative, provoking; noun: provoker;
+las - article: the; pronoun: them;
+española - adjective: Spanish; noun: Spanish, Spaniard;
+saben - verb: know;
+administrar - verb: manage;
+Estado - noun: state;
+Gobierno - noun: government;
+tiene - verb: you have;
+mostrarle - verb: show;
+Reding - ProperNoun: Reding;
+aseguran - verb: ensure;
+malestar - noun: discomfort;
+profesiones - noun: professions;
+trabajo - noun: work;
+próxima - adjective: next;
+década - noun: decade; adjective: decennial;
+semana - noun: week;
+fantástica - adjective: great;
+Ibra - ProperNoun: Ibra;
