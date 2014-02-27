@@ -80,7 +80,11 @@ class MachineTranslation:
 			pronounAdded = self.addPronoun(nounSwapped)
 			possessives = self.possessive(pronounAdded)
 			removedDeterminers = self.removeDeterminers(possessives)
-			removeExtraSpace = re.sub(r' \'s', '\'s', removedDeterminers)
+			capAndNum = self.capitalizationAndNumbers(removedDeterminers)
+			removeExtraSpace = re.sub(r' \'s', '\'s', capAndNum)
+			removeExtraSpace = re.sub(r' ,', ',', capAndNum) 
+			if removeExtraSpace[-2:] == " .":
+				removeExtraSpace = removeExtraSpace[:-2] + "."
 			self.translation.append(removeExtraSpace)
 
 	# if question is a yes or no question, swap the order of first two words
@@ -224,6 +228,27 @@ class MachineTranslation:
 		if len(removeOf) != 0:
 			for i in reversed(removeOf):
 				tokens.pop(i)
+
+		return " ".join(map(str, tokens))
+
+	def capitalizationAndNumbers(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		tokens[0] = tokens[0].capitalize()
+
+		pos = nltk.pos_tag(tokens)
+
+		days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+		months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+
+		for i, word in enumerate(pos):
+			if word[1] in ['NNP', 'NNPS']:
+				tokens[i] = tokens[i].capitalize()
+
+			if word[1] in ['CD']:
+				tokens[i] = re.sub(r'\.', ',', tokens[i])
+
+			if word[0] in days or word[0] in months:
+				tokens[i] = tokens[i].capitalize()
 
 		return " ".join(map(str, tokens))
 
