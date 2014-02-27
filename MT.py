@@ -82,7 +82,7 @@ class MachineTranslation:
 			removedDeterminers = self.removeDeterminers(possessives)
 			capAndNum = self.capitalizationAndNumbers(removedDeterminers)
 			removeExtraSpace = re.sub(r' \'s', '\'s', capAndNum)
-			removeExtraSpace = re.sub(r' ,', ',', capAndNum) 
+			removeExtraSpace = re.sub(r' ,', ',', removeExtraSpace)
 			if removeExtraSpace[-2:] == " .":
 				removeExtraSpace = removeExtraSpace[:-2] + "."
 			elif removeExtraSpace[-2:] == " ?":
