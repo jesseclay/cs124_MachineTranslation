@@ -9,8 +9,6 @@ class MachineTranslation:
 	NUMBER_PAT = "\d+"
 
 	def __init__(self):
-		
-
 		self.translation = []
 		self.dictionary = collections.defaultdict(lambda: 0)
 		dictionaryFile = open("Dictionary.txt", 'r')
