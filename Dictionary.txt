@@ -38,7 +38,7 @@ en - in
 España - Spain
 Marruecos - Morocco
 no - no
-aceptó - accpeted
+aceptó - accepted
 la - the
 ayuda - help
 española - spanish
