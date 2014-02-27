@@ -1,12 +1,18 @@
 # -*- coding: UTF-8 -*-
 
 import collections, nltk
+from nltk.corpus import cess_esp as cess
+from nltk import BigramTagger as bt
 
 class MachineTranslation:
 
 	def __init__(self):
 		self.adjective = ['JJ', 'JJR', 'JJS']
 		self.noun = ['NN', 'NNS', 'NNP', 'NNPS']
+		self.verb = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+
+		cess_sents = cess.tagged_sents()
+		self.bi_tag = bt(cess_sents)
 
 		self.translation = []
 		self.dictionary = collections.defaultdict(lambda: 0)
@@ -22,8 +28,10 @@ class MachineTranslation:
 
 	def translate(self):
 		for sentence in self.sentences:
+
 			sentenceTranslation = []
-			tokens = nltk.word_tokenize(sentence)
+			negationSwapped = self.negationSwap(sentence)
+			tokens = nltk.word_tokenize(negationSwapped)
 			for token in tokens:
 				token = token.decode('utf-8')
 				wordTranslation = self.dictionary[token]
@@ -43,6 +51,28 @@ class MachineTranslation:
 				temp = tokens[i]
 				tokens[i] = tokens[i+1]
 				tokens[i+1] = temp
+			firstWord = word
+
+		return " ".join(map(str, tokens))
+
+	def negationSwap(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = self.bi_tag.tag(tokens)
+
+		firstWord = pos[0]
+		for i, word in enumerate(pos[1:]):
+			if firstWord[0].lower() == "no" and word[1] is not None and (word[1].startswith('vs') or word[1].startswith('vm')):
+				tokens[i] = tokens[i+1]
+				tokens[i+1] = "not"
+			firstWord = word
+
+		firstWord = pos[0]
+		secondWord = pos[1]
+		for i, word in enumerate(pos[2:]):
+			if firstWord[0].lower() == "no" and secondWord[1] is not None and secondWord[1].startswith('pp'):
+				if word[1] is not None and (word[1].startswith('vs') or word[1].startswith('vm')):
+					tokens[i] = tokens[i+1]
+					tokens[i+1] = "does not"
 			firstWord = word
 
 		return " ".join(map(str, tokens))
