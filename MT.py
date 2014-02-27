@@ -3,10 +3,11 @@
 import collections, nltk, re
 from nltk.corpus import cess_esp as cess
 from nltk.corpus import brown
-from nltk import BigramTagger as bt
+from nltk import UnigramTagger as bt
 from nltk.model import NgramModel
 from nltk.probability import LidstoneProbDist
 from nltk import FreqDist
+from nltk.corpus import wordnet
 
 class MachineTranslation:
 	PUNCTUATION = [',', '.', '(', ')', '?']
@@ -46,7 +47,7 @@ class MachineTranslation:
 				if token in self.PUNCTUATION or re.search(self.NUMBER_PAT, token):
 					wordTranslation = token
 				else:
-					wordTranslation = self.dictionary[token]
+					wordTranslation = self.pluralADJ(token)
 				sentenceTranslation.append(wordTranslation)
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
@@ -157,21 +158,27 @@ class MachineTranslation:
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
 
-		print sentence
-		print pos
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
 			if firstWord[1] not in self.NOUN and firstWord[1] not in ['TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.VERB:
-				print firstWord[0], firstWord[1]
-				print word[0], word[1]
 				tokens[i+1] = "they " + tokens[i+1]
 			firstWord = word
 
 		if pos[0][1] in self.VERB:
 			tokens[0] = "They " + tokens[0]
 
-		print " ".join(map(str, tokens))
 		return " ".join(map(str, tokens))
+
+	def pluralADJ(self, token):
+		translation = self.dictionary[token]
+		pos = self.bi_tag.tag(nltk.word_tokenize(token))
+		print pos
+		if pos[0][1] is not None and pos[0][1].startswith('a') and 'p' in pos[0][1]:
+			if translation.endswith('s'):
+				if wordnet.synsets(translation[:-1]):
+					translation = translation[:-1]
+		return translation
+
 
 MT = MachineTranslation()
 MT.translate()
