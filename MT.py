@@ -26,7 +26,11 @@ class MachineTranslation:
 				sentenceTranslation.append(wordTranslation)
 			self.translation.append(" ".join(map(str, sentenceTranslation)))
 
+	def showTranslation(self):
+		for sentence in self.translation:
+			print sentence
 
 MT = MachineTranslation()
 MT.translate()
+MT.showTranslation()
 
