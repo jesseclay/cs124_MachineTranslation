@@ -60,7 +60,8 @@ class MachineTranslation:
 			directTranslation = " ".join(map(str, sentenceTranslation))
 			adjNounSwapped = self.adjNounSwap(directTranslation)
 			nounSwapped = self.nounSwap(adjNounSwapped)
-			possessives = self.possessive(nounSwapped)
+			pronounAdded = self.addPronoun(nounSwapped)
+			possessives = self.possessive(pronounAdded)
 			self.translation.append(possessives)
 
 	# if question is a yes or no question, swap the order of first two words
@@ -163,6 +164,26 @@ class MachineTranslation:
 				tokens[i+1] = temp
 			firstWord = word
 
+		return " ".join(map(str, tokens))
+
+	def addPronoun(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = nltk.pos_tag(tokens)
+
+		print sentence
+		print pos
+		firstWord = pos[0]
+		for i, word in enumerate(pos[1:]):
+			if firstWord[1] not in self.NOUN and firstWord[1] not in ['TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.VERB:
+				print firstWord[0], firstWord[1]
+				print word[0], word[1]
+				tokens[i+1] = "they " + tokens[i+1]
+			firstWord = word
+
+		if pos[0][1] in self.VERB:
+			tokens[0] = "They " + tokens[0]
+
+		print " ".join(map(str, tokens))
 		return " ".join(map(str, tokens))
 
 MT = MachineTranslation()
