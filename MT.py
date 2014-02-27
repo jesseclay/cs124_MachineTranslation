@@ -7,7 +7,6 @@ from nltk import UnigramTagger as ut
 from nltk.model import NgramModel
 from nltk.probability import LidstoneProbDist
 from nltk import FreqDist
-from pattern.en import conjugate
 from nltk.corpus import wordnet
 
 class MachineTranslation:
@@ -72,7 +71,7 @@ class MachineTranslation:
 					if any(word[1].startswith(vp) for vp in self.ESP_VERB_PAST):
 						wordTranslation += 'ed'
 				else:
-					wordTranslation = self.pluralADJ(self.dictionary[candidate]['default'][0])
+					wordTranslation = self.pluralADJ(candidate)
 				sentenceTranslation.append(wordTranslation)
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
@@ -202,8 +201,8 @@ class MachineTranslation:
 		return " ".join(map(str, tokens))
 
 	def pluralADJ(self, token):
-		translation = self.dictionary[token]
-		pos = self.bi_tag.tag(nltk.word_tokenize(token))
+		translation = self.dictionary[token]['default'][0]
+		pos = self.uni_tag.tag(nltk.word_tokenize(token))
 		if pos[0][1] is not None and pos[0][1].startswith('a') and 'p' in pos[0][1]:
 			if translation.endswith('s'):
 				if wordnet.synsets(translation[:-1]):
