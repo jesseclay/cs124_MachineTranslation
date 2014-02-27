@@ -2,7 +2,11 @@
 
 import collections, nltk, re
 from nltk.corpus import cess_esp as cess
+from nltk.corpus import brown
 from nltk import BigramTagger as bt
+from nltk.model import NgramModel
+from nltk.probability import LidstoneProbDist
+from nltk import FreqDist
 
 class MachineTranslation:
 	PUNCTUATION = [',', '.', '(', ')', '?']
@@ -43,7 +47,9 @@ class MachineTranslation:
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
 			adjNounSwapped = self.adjNounSwap(directTranslation)
-			self.translation.append(adjNounSwapped)
+			possessives = self.possessive(adjNounSwapped)
+			nounSwapped = self.nounSwap(possessives)
+			self.translation.append(nounSwapped)
 
 	def adjNounSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
@@ -77,9 +83,66 @@ class MachineTranslation:
 				if word[1] is not None and (word[1].startswith('vs') or word[1].startswith('vm')):
 					tokens[i] = tokens[i+1]
 					tokens[i+1] = "does not"
-			firstWord = word
+			firstWord = secondWord
+			secondWord = word
 
 		return " ".join(map(str, tokens))
+
+	def possessive(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = nltk.pos_tag(tokens)
+
+		removeOf = []
+
+		firstWord = pos[0]
+		secondWord = pos[1]
+		for i, word in enumerate(pos[2:]):
+			if firstWord[1] in self.NOUN and secondWord[0]=='of' and word[1] in ['NNP', 'NNPS']:
+				temp = tokens[i]
+				tokens[i] = tokens[i+2] + "'s"
+				tokens[i+2] = temp
+				removeOf.append(i+1)
+			firstWord = secondWord
+			secondWord = word
+
+		if len(removeOf) != 0:
+			for i in reversed(removeOf):
+				tokens.pop(i)
+
+		return " ".join(map(str, tokens))
+
+	def nounSwap(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = nltk.pos_tag(tokens)
+
+		removeOf = []
+
+		firstWord = pos[0]
+		secondWord = pos[1]
+		print sentence
+		print pos
+		for i, word in enumerate(pos[2:]):
+			if firstWord[1] in ['NN', 'NNS'] and secondWord[0]=='of' and word[1] in ['NN', 'NNS']:
+				print 'here'
+				temp = tokens[i]
+				tokens[i] = tokens[i+2]
+				tokens[i+2] = temp
+				removeOf.append(i+1)
+			firstWord = secondWord
+			secondWord = word
+
+		if len(removeOf) != 0:
+			for i in reversed(removeOf):
+				tokens.pop(i)
+
+		return " ".join(map(str, tokens))
+
+	def ngram(self, words):
+		words = ['of', 'from', 'by', 'with', 'in']
+		model = NgramModel(3, brown.words()) 
+		for word in words:
+			print "a judge "+word+" Miami"
+		 	print model.prob(word, ["a judge "+word+" Miami"])
 
 MT = MachineTranslation()
 MT.translate()
