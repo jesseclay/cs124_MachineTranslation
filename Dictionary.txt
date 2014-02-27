@@ -1,6 +1,6 @@
-Los - the
-dos - two
-terroristas - terrorists
+Los - article: the; prounoun: them
+dos - noun: two, deuce, couple, twain, a couple of; adjective: twain
+terroristas - adjective: terrorists; noun: terrorists
 enseñaron - show
 el - the
 pequeño - small
