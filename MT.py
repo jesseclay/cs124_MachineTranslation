@@ -10,6 +10,7 @@ class MachineTranslation:
 	NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
 	VERB = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
 	NUMBER_PAT = "\d+"
+	OPEN_QUESTION_MARK = '\xc2\xbf'
 	
 	def __init__(self):
 		cess_sents = cess.tagged_sents()
@@ -31,7 +32,10 @@ class MachineTranslation:
 		for sentence in self.sentences:
 
 			sentenceTranslation = []
-			negationSwapped = self.negationSwap(sentence)
+			questionSwapped = sentence
+			if sentence.startswith(self.OPEN_QUESTION_MARK):
+				questionSwapped = self.questionSwap(sentence)
+			negationSwapped = self.negationSwap(questionSwapped)
 			tokens = nltk.word_tokenize(negationSwapped)
 			for token in tokens:
 				token = token.decode('utf-8')
@@ -45,18 +49,12 @@ class MachineTranslation:
 			adjNounSwapped = self.adjNounSwap(directTranslation)
 			self.translation.append(adjNounSwapped)
 
-	def adjNounSwap(self, sentence):
+	def questionSwap(self, sentence):
+		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
 		tokens = nltk.word_tokenize(sentence)
-		pos = nltk.pos_tag(tokens)
-
-		firstWord = pos[0]
-		for i, word in enumerate(pos[1:]):
-			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
-				temp = tokens[i]
-				tokens[i] = tokens[i+1]
-				tokens[i+1] = temp
-			firstWord = word
-
+		pos = self.bi_tag.tag(tokens)
+		#if pos[1] in self.VERB:
+		self.swap(tokens[0], tokens[1])
 		return " ".join(map(str, tokens))
 
 	def negationSwap(self, sentence):
@@ -80,6 +78,23 @@ class MachineTranslation:
 			firstWord = word
 
 		return " ".join(map(str, tokens))
+
+	def adjNounSwap(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = nltk.pos_tag(tokens)
+
+		firstWord = pos[0]
+		for i, word in enumerate(pos[1:]):
+			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
+				self.swap(tokens[i], tokens[i+1])
+			firstWord = word
+
+		return " ".join(map(str, tokens))
+
+	def swap(self, token1, token2):
+		temp = token1
+		token1 = token2
+		token2 = temp
 
 MT = MachineTranslation()
 MT.translate()
