@@ -24,9 +24,9 @@ class MachineTranslation:
 		self.translation = []
 		self.dictionary = collections.defaultdict(lambda: 0)
 		dictionaryFile = open("Dictionary.txt", 'r')
-		for translation in dictionaryFile:
-			spanish, english = translation.split(" - ")
-			self.dictionary[spanish.decode('utf-8')] = english.rstrip('\n')
+		# for translation in dictionaryFile:
+		# 	spanish, english = translation.split(" - ")
+		# 	self.dictionary[spanish.decode('utf-8')] = english.rstrip('\n')
 
 		self.sentences = []
 		sentencesFile = open("DevSet.txt", 'r')
@@ -55,7 +55,9 @@ class MachineTranslation:
 			nounSwapped = self.nounSwap(adjNounSwapped)
 			pronounAdded = self.addPronoun(nounSwapped)
 			possessives = self.possessive(pronounAdded)
-			self.translation.append(possessives)
+			removedDeterminers = self.removeDeterminers(possessives)
+			removeExtraSpace = re.sub(r' \'s', '\'s', removedDeterminers)
+			self.translation.append(removeExtraSpace)
 
 	def questionSwap(self, sentence):
 		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
@@ -172,13 +174,29 @@ class MachineTranslation:
 	def pluralADJ(self, token):
 		translation = self.dictionary[token]
 		pos = self.bi_tag.tag(nltk.word_tokenize(token))
-		print pos
 		if pos[0][1] is not None and pos[0][1].startswith('a') and 'p' in pos[0][1]:
 			if translation.endswith('s'):
 				if wordnet.synsets(translation[:-1]):
 					translation = translation[:-1]
 		return translation
 
+	def removeDeterminers(self, sentence):
+		tokens = nltk.word_tokenize(sentence)
+		pos = nltk.pos_tag(tokens)
+
+		removeOf = []
+
+		firstWord = pos[0]
+		for i, word in enumerate(pos[1:]):
+			if firstWord[1] in ['DT'] and word[1] in ['NNP', 'NNPS', 'NNS']:
+				removeOf.append(i)
+			firstWord = word
+
+		if len(removeOf) != 0:
+			for i in reversed(removeOf):
+				tokens.pop(i)
+
+		return " ".join(map(str, tokens))
 
 MT = MachineTranslation()
 MT.translate()
