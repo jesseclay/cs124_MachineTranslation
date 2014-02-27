@@ -51,11 +51,10 @@ class MachineTranslation:
 
 	def questionSwap(self, sentence):
 		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
-		tokens = nltk.word_tokenize(sentence)
-		pos = self.bi_tag.tag(tokens)
-		#if pos[1] in self.VERB:
-		self.swap(tokens[0], tokens[1])
-		return " ".join(map(str, tokens))
+		#tokens = nltk.word_tokenize(sentence)
+		#pos = self.bi_tag.tag(tokens)
+		#return " ".join(map(str, tokens))
+		return sentence
 
 	def negationSwap(self, sentence):
 		tokens = nltk.word_tokenize(sentence)
@@ -86,15 +85,12 @@ class MachineTranslation:
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
 			if firstWord[1] in self.NOUN and word[1] in self.ADJECTIVE:
-				self.swap(tokens[i], tokens[i+1])
+				temp = tokens[i]
+				tokens[i] = tokens[i+1]
+				tokens[i+1] = temp
 			firstWord = word
 
 		return " ".join(map(str, tokens))
-
-	def swap(self, token1, token2):
-		temp = token1
-		token1 = token2
-		token2 = temp
 
 MT = MachineTranslation()
 MT.translate()
