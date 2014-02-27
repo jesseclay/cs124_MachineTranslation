@@ -85,6 +85,8 @@ class MachineTranslation:
 			removeExtraSpace = re.sub(r' ,', ',', capAndNum) 
 			if removeExtraSpace[-2:] == " .":
 				removeExtraSpace = removeExtraSpace[:-2] + "."
+			elif removeExtraSpace[-2:] == " ?":
+				removeExtraSpace = removeExtraSpace[:-2] + "?"
 			self.translation.append(removeExtraSpace)
 
 	# if question is a yes or no question, swap the order of first two words
@@ -195,7 +197,7 @@ class MachineTranslation:
 
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
-			if firstWord[1] not in self.ENG_NOUN and firstWord[1] not in ['TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.ENG_VERB:
+			if firstWord[1] not in self.ENG_NOUN and firstWord[0] != 'have' and firstWord[1] not in ['DT', 'TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.ENG_VERB:
 				tokens[i+1] = "they " + tokens[i+1]
 			firstWord = word
 
