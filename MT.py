@@ -7,7 +7,7 @@ class MachineTranslation:
 	ADJECTIVE = ['JJ', 'JJR', 'JJS']
 	NOUN = ['NN', 'NNS', 'NNP', 'NNPS']
 	NUMBER_PAT = "\d+"
-
+	
 	def __init__(self):
 		self.translation = []
 		self.dictionary = collections.defaultdict(lambda: 0)
