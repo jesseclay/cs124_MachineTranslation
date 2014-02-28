@@ -6,7 +6,7 @@ a - default: to; preposition: to;
 Acciona - default: Acciona; ProperNoun: Acciona;
 que - default: what; adjective: what; pronoun: what, that; conjunction: that, than;
 pierde - default: lost; verb: lost;
-millones - default: millon; noun: millon;
+millones - default: million; noun: million;
 Es - default: this is; phrase: this is, you are;
 es - default: this is; phrase: this is, you are;
 la - default: the; article: the; pronoun: her, it, you;
