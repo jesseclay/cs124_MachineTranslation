@@ -27,6 +27,8 @@ class MachineTranslation:
 		cess_sents = cess.tagged_sents()
 		self.uni_tag = ut(cess_sents)
 
+		self.model = NgramModel(3, brown.words())
+
 		self.translation = []
 		self.dictionary = collections.defaultdict(lambda: 0)
 		dictionaryFile = open("Dictionary.txt", 'r')
@@ -74,7 +76,8 @@ class MachineTranslation:
 
 			directTranslation = " ".join(map(str, sentenceTranslation))
 			adjNounSwapped = self.adjNounSwap(directTranslation)
-			nounSwapped = self.nounSwap(adjNounSwapped)
+			lm = self.ngram(adjNounSwapped)
+			nounSwapped = self.nounSwap(lm)
 			pronounAdded = self.addPronoun(nounSwapped)
 			possessives = self.possessive(pronounAdded)
 			removedDeterminers = self.removeDeterminers(possessives)
@@ -167,12 +170,17 @@ class MachineTranslation:
 
 		return " ".join(map(str, tokens))
 
-	def ngram(self, words):
-		words = ['of', 'from', 'by', 'with', 'in']
-		model = NgramModel(3, brown.words()) 
+	def ngram(self, sentence):
+		words = ['your', 'its', 'his', 'her', 'their']
+		highestProb = 0
+		highestSentence = sentence
 		for word in words:
-			print "a judge "+word+" Miami"
-		 	print model.prob(word, ["a judge "+word+" Miami"])
+			candidateSentence = re.sub('your', word, sentence)
+		 	prob = self.model.prob(word, [candidateSentence])
+		 	if prob > highestProb:
+		 		highestProb = prob
+		 		highestSentence = candidateSentence
+		return highestSentence
 
 	# reverses order of adjacent adjectives and nouns
 	def adjNounSwap(self, sentence):
