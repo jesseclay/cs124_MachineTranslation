@@ -193,7 +193,6 @@ class MachineTranslation:
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
 
-		print pos
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
 			if firstWord[1] not in self.ENG_NOUN and firstWord[0] != 'have' and firstWord[1] not in ['DT', 'TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and (word[1] in self.ENG_VERB or word[0]=='have'):
@@ -257,7 +256,20 @@ class MachineTranslation:
 			if word[0] in days or word[0] in months:
 				tokens[i] = tokens[i].capitalize()
 
-		return " ".join(map(str, tokens))
+		newTokens = []
+		for i, token in enumerate(tokens):
+			if token.lower() == 'a' and i+1<len(tokens):
+				if any(tokens[i+1].startswith(vp) for vp in ['a', 'e', 'i', 'o', 'u']):
+					if i==0:
+						newTokens.append('An')
+					else:
+						newTokens.append('an')
+				else:
+					newTokens.append(token)
+			else:
+				newTokens.append(token)
+
+		return " ".join(map(str, newTokens))
 
 	def verbConjugation(self, candidate, word):
 		wordTranslation = en.verb.present(self.dictionary[candidate]['verb'][0], person=word[1][4])
