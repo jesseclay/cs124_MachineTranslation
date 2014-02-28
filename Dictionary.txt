@@ -85,7 +85,7 @@ experiencia - default: experience; noun: experience;
 creemos - default: think; verb: think;
 tenemos - default: have; verb: have;
 una - default: a; article: a, an; adjective: one;
-auténtica - default: authenitic; adjective: authentic;
+auténtica - default: authentic; adjective: authentic;
 oportunidad - default: opportunity; noun: opportunity;
 paz - default: peace; noun: peace;
 Cuál - default: what; interjection: what;
