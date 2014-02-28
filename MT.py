@@ -298,6 +298,55 @@ class MachineTranslation:
 
 		return wordTranslation
 
+# import collections, nltk, re
+
+# class MachineTranslation:
+
+# 	PUNCTUATION = [',', '.', '(', ')', '?']
+# 	NUMBER_PAT = "\d+"
+# 	OPEN_QUESTION_MARK = '\xc2\xbf'
+
+# 	def __init__(self):
+# 		self.translation = []
+# 		self.dictionary = collections.defaultdict(lambda: 0)
+# 		dictionaryFile = open("Dictionary.txt", 'r')
+# 		for translation in dictionaryFile:
+# 			spanish, english = translation.split(" - ")
+# 			spanish = spanish.decode('utf-8')
+# 			self.dictionary[spanish] = collections.defaultdict(lambda: [])
+# 			english = english.rstrip(';\n').split('; ')
+# 			for pos in english:
+# 				pos = pos.split(': ')
+# 				self.dictionary[spanish][pos[0]] = pos[1].split(', ')
+
+# 		self.sentences = []
+# 		sentencesFile = open("DevSet.txt", 'r')
+# 		for sentence in sentencesFile:
+# 			self.sentences.append(sentence.rstrip('\n'))
+
+# 	def translate(self):
+# 		for sentence in self.sentences:
+
+# 			if sentence.startswith(self.OPEN_QUESTION_MARK):
+#  				sentence = self.questionSwap(sentence)
+
+# 			sentenceTranslation = []
+# 			tokens = nltk.word_tokenize(sentence)
+# 			for token in tokens:
+# 				token = token.decode('utf-8')
+# 				print token
+# 				if token in self.PUNCTUATION or re.search(self.NUMBER_PAT, token):
+# 					wordTranslation = token
+# 				else:
+# 					wordTranslation = self.dictionary[token]['default'][0]
+# 				sentenceTranslation.append(wordTranslation)
+# 			self.translation.append(" ".join(map(str, sentenceTranslation)))
+
+
+# 	def questionSwap(self, sentence):
+# 		sentence = sentence.lstrip(self.OPEN_QUESTION_MARK)
+# 		return sentence
+
 MT = MachineTranslation()
 MT.translate()
 for i, translation in enumerate(MT.translation):
