@@ -42,7 +42,7 @@ class MachineTranslation:
 				self.dictionary[spanish][pos[0]] = pos[1].split(', ')
 
 		self.sentences = []
-		sentencesFile = open("DevSet.txt", 'r')
+		sentencesFile = open("TestSet.txt", 'r')
 		for sentence in sentencesFile:
 			self.sentences.append(sentence.rstrip('\n'))
 
@@ -58,7 +58,8 @@ class MachineTranslation:
 
 			pos = self.uni_tag.tag(tokens)
 			for word in pos:
-				candidate = word[0].decode('utf-8')
+				candidate = word[0].decode('utf-8').lower()
+				print candidate
 				if candidate in self.PUNCTUATION or re.search(self.NUMBER_PAT, candidate):
 					wordTranslation = candidate
 				elif (word[1] and any(word[1].startswith(adj) for adj in self.ESP_ADJECTIVE) and 
@@ -67,9 +68,12 @@ class MachineTranslation:
 				elif (word[1] and any(word[1].startswith(noun) for noun in self.ESP_NOUN) and
 					'noun' in self.dictionary[candidate]):
 					wordTranslation = self.dictionary[candidate]['noun'][0]
+					if word[1][1] == 'p': # proper noun
+						wordTranslation = wordTranslation.capitalize()
 				elif (word[1] and any(word[1].startswith(verb) for verb in self.ESP_VERB) and
 					'verb' in self.dictionary[candidate]):
-					wordTranslation = self.verbConjugation(candidate, word)
+					#wordTranslation = self.verbConjugation(candidate, word)
+					wordTranslation = self.pluralADJ(candidate)
 				else:
 					wordTranslation = self.pluralADJ(candidate)
 				sentenceTranslation.append(wordTranslation)
@@ -115,8 +119,9 @@ class MachineTranslation:
 		for i, word in enumerate(pos[2:]):
 			if firstWord[0].lower() == "no" and secondWord[1] is not None and secondWord[1].startswith('pp'):
 				if word[1] is not None and (word[1].startswith('vs') or word[1].startswith('vm')):
+					temp = tokens[i]
 					tokens[i] = tokens[i+1]
-					tokens[i+1] = "does not"
+					tokens[i+1] = "do " + temp
 			firstWord = secondWord
 			secondWord = word
 
