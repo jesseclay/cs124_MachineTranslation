@@ -67,10 +67,7 @@ class MachineTranslation:
 					wordTranslation = self.dictionary[candidate]['noun'][0]
 				elif (word[1] and any(word[1].startswith(verb) for verb in self.ESP_VERB) and
 					'verb' in self.dictionary[candidate]):
-					wordTranslation = en.verb.present(self.dictionary[candidate]['verb'][0], person=word[1][4])
-					#wordTranslation = self.dictionary[candidate]['verb'][0]
-					if any(word[1].startswith(vp) for vp in self.ESP_VERB_PAST):
-						wordTranslation = en.verb.past(self.dictionary[candidate]['verb'][0], person=word[1][4])
+					wordTranslation = self.verbConjugation(candidate, word)
 				else:
 					wordTranslation = self.pluralADJ(candidate)
 				sentenceTranslation.append(wordTranslation)
@@ -196,16 +193,17 @@ class MachineTranslation:
 		tokens = nltk.word_tokenize(sentence)
 		pos = nltk.pos_tag(tokens)
 
+		print pos
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
-			if firstWord[1] not in self.ENG_NOUN and firstWord[0] != 'have' and firstWord[1] not in ['DT', 'TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.ENG_VERB:
+			if firstWord[1] not in self.ENG_NOUN and firstWord[0] != 'have' and firstWord[1] not in ['DT', 'TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and (word[1] in self.ENG_VERB or word[0]=='have'):
 				if firstWord[1] == 'VBP' or (wordnet.synsets(word[0]) and not word[0].endswith('s')):
 					tokens[i+1] = "they " + tokens[i+1]
 				else:
 					tokens[i+1] = "it " + tokens[i+1]
 			firstWord = word
 
-		if pos[0][1] in self.ENG_VERB:
+		if pos[0][1] in self.ENG_VERB or pos[0][0]=='have':
 			if pos[0][1] == 'VBP' or (wordnet.synsets(word[0]) and not word[0].endswith('s')):
 				tokens[0] = "They " + tokens[0]
 			else:
@@ -261,6 +259,19 @@ class MachineTranslation:
 
 		return " ".join(map(str, tokens))
 
+	def verbConjugation(self, candidate, word):
+		wordTranslation = en.verb.present(self.dictionary[candidate]['verb'][0], person=word[1][4])
+		
+		if word[1][2] == 'p':
+			wordTranslation = en.verb.present_participle(self.dictionary[candidate]['verb'][0])
+
+		if word[1][3] == 's':
+			wordTranslation = en.verb.past(self.dictionary[candidate]['verb'][0], person=word[1][4])
+
+			if word[1][2] == 'p':
+				wordTranslation = en.verb.past_participle(self.dictionary[candidate]['verb'][0])
+
+		return wordTranslation
 
 MT = MachineTranslation()
 MT.translate()
