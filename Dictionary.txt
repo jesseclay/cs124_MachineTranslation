@@ -71,7 +71,7 @@ juez - default: judge; noun: judge;
 verificadores - default: checkers; noun: checkers;
 también - default: also; adverb: also, too, as well;
 han - default: have; verb: have;
-precisado - default: specified; verb: specified;
+precisado - default: specify; verb: specify;
 cobran - default: charge; verb: charge;
 euros - default: euros; noun: euros;
 por - default: per; preposition: per;
@@ -102,7 +102,7 @@ ver - default: view; verb: view;
 pene - default: penis; noun: penis;
 Bieber - default: Bieber; ProperNoun: Bieber;
 Nadal - default: Nadal; ProperNoun: Nadal;
-vuelve - default: returns; verb: returns;
+vuelve - default: return; verb: return;
 sitio - default: room; noun: room, site, place, location, locale.
 me - default: me; pronoun: me, myself;
 gusta - default: like; verb: like;
