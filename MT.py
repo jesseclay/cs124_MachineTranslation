@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import collections, nltk, re
+import collections, nltk, re, en
 from nltk.corpus import cess_esp as cess
 from nltk.corpus import brown
 from nltk import UnigramTagger as ut
@@ -67,9 +67,10 @@ class MachineTranslation:
 					wordTranslation = self.dictionary[candidate]['noun'][0]
 				elif (word[1] and any(word[1].startswith(verb) for verb in self.ESP_VERB) and
 					'verb' in self.dictionary[candidate]):
-					wordTranslation = self.dictionary[candidate]['verb'][0]
+					wordTranslation = en.verb.present(self.dictionary[candidate]['verb'][0], person=word[1][4])
+					#wordTranslation = self.dictionary[candidate]['verb'][0]
 					if any(word[1].startswith(vp) for vp in self.ESP_VERB_PAST):
-						wordTranslation += 'ed'
+						wordTranslation = en.verb.past(self.dictionary[candidate]['verb'][0], person=word[1][4])
 				else:
 					wordTranslation = self.pluralADJ(candidate)
 				sentenceTranslation.append(wordTranslation)
@@ -198,11 +199,17 @@ class MachineTranslation:
 		firstWord = pos[0]
 		for i, word in enumerate(pos[1:]):
 			if firstWord[1] not in self.ENG_NOUN and firstWord[0] != 'have' and firstWord[1] not in ['DT', 'TO', 'WP', 'RB', 'PRP', 'VBZ', '.', ','] and word[1] in self.ENG_VERB:
-				tokens[i+1] = "they " + tokens[i+1]
+				if firstWord[1] == 'VBP' or (wordnet.synsets(word[0]) and not word[0].endswith('s')):
+					tokens[i+1] = "they " + tokens[i+1]
+				else:
+					tokens[i+1] = "it " + tokens[i+1]
 			firstWord = word
 
 		if pos[0][1] in self.ENG_VERB:
-			tokens[0] = "They " + tokens[0]
+			if pos[0][1] == 'VBP' or (wordnet.synsets(word[0]) and not word[0].endswith('s')):
+				tokens[0] = "They " + tokens[0]
+			else:
+				tokens[0] = "It " + tokens[0]
 
 		return " ".join(map(str, tokens))
 
@@ -253,6 +260,7 @@ class MachineTranslation:
 				tokens[i] = tokens[i].capitalize()
 
 		return " ".join(map(str, tokens))
+
 
 MT = MachineTranslation()
 MT.translate()
